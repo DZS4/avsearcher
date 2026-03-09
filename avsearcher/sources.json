@@ -1,0 +1,23 @@
+[
+  {
+    "key": "xkw",
+    "label": "新况味测评",
+    "site_url": "https://www.xkwceping.com",
+    "latest_feed": "https://www.xkwceping.com/fjb/feed/",
+    "search_feed_template": "https://www.xkwceping.com/search/{query}/feed/rss2/",
+    "default_enabled": true,
+    "review_terms": ["测评", "评测", "飞机杯", "名器", "倒模", "推荐"],
+    "generic_categories": ["飞机杯评测", "新况味导师", "大杯", "小型杯", "中型杯", "大型杯"]
+  },
+  {
+    "key": "cup001",
+    "label": "B酱评测",
+    "site_url": "https://www.cup001.com",
+    "latest_feed": "https://www.cup001.com/feed/",
+    "search_feed_template": "https://www.cup001.com/search/{query}/feed/rss2/",
+    "default_enabled": true,
+    "review_terms": ["测评", "评测", "飞机杯", "名器", "倒模", "推荐"],
+    "generic_categories": ["评测", "杯知识学院", "1-2星", "3星", "3.5星", "4星", "4.5星", "5星"]
+  }
+]
+

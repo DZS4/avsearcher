@@ -1,0 +1,23 @@
+FROM python:3.10-slim-bullseye
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git zip unzip openjdk-17-jdk-headless wget curl \
+    autoconf automake libtool pkg-config \
+    libffi-dev libssl-dev zlib1g-dev \
+    build-essential cmake ccache \
+    lsb-release software-properties-common \
+    patch \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+ENV PATH=$JAVA_HOME/bin:$PATH
+
+RUN pip install --no-cache-dir buildozer==1.5.0 cython==0.29.36
+
+WORKDIR /app
+COPY . /app
+
+# 输出到 /app/bin，使用 volume 挂载取回
+CMD ["buildozer", "-v", "android", "debug"]

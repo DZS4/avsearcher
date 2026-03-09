@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AVSearcher</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="backdrop"></div>
+    <main class="shell">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">AVSearcher</p>
+          <h1>飞机杯评测查询台</h1>
+          <p class="subtitle">
+            聚合最新中文评测源，按品牌、型号、关键词和时间范围查询，适合选品、比价和竞品跟踪。
+          </p>
+        </div>
+        <div class="hero-stats">
+          <article class="stat-card">
+            <span>最新模式</span>
+            <strong id="stat-total">0</strong>
+            <small>已加载结果</small>
+          </article>
+          <article class="stat-card">
+            <span>覆盖来源</span>
+            <strong id="stat-sources">0</strong>
+            <small>默认启用站点</small>
+          </article>
+          <article class="stat-card">
+            <span>最近发布时间</span>
+            <strong id="stat-fresh">-</strong>
+            <small>按北京时间展示</small>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel controls">
+        <label class="search-box">
+          <span>关键词</span>
+          <input id="query-input" type="text" placeholder="女优 / 品牌 / 型号 / 关键词，例如 中川美铃 或 GXP" />
+        </label>
+
+        <div class="row">
+          <label>
+            <span>时间范围</span>
+            <select id="days-select">
+              <option value="30">近 30 天</option>
+              <option value="90">近 90 天</option>
+              <option value="180">近 180 天</option>
+              <option value="365" selected>近 365 天</option>
+              <option value="3650">全部</option>
+            </select>
+          </label>
+
+          <label>
+            <span>排序</span>
+            <select id="sort-select">
+              <option value="latest" selected>按最新</option>
+              <option value="relevance">按相关度</option>
+            </select>
+          </label>
+
+          <label>
+            <span>条数</span>
+            <select id="limit-select">
+              <option value="20">20</option>
+              <option value="30" selected>30</option>
+              <option value="50">50</option>
+              <option value="80">80</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="source-wrap">
+          <div class="source-head">
+            <span>来源</span>
+            <button id="toggle-sources" class="ghost-button" type="button">全选 / 反选</button>
+          </div>
+          <div id="source-list" class="source-list"></div>
+        </div>
+
+        <div class="actions">
+          <button id="search-button" class="primary-button" type="button">查询</button>
+          <button id="latest-button" class="ghost-button" type="button">看最新</button>
+          <button id="export-button" class="ghost-button" type="button">导出 CSV</button>
+        </div>
+      </section>
+
+      <section class="panel status-bar">
+        <div>
+          <strong id="status-text">正在加载默认来源…</strong>
+          <span id="status-meta"></span>
+        </div>
+        <div id="error-box" class="error-box"></div>
+      </section>
+
+      <section id="results" class="results"></section>
+    </main>
+
+    <template id="result-template">
+      <article class="result-card">
+        <div class="result-meta">
+          <span class="pill source-pill" data-field="source"></span>
+          <span class="pill" data-field="published"></span>
+          <span class="pill" data-field="rating"></span>
+          <span class="pill" data-field="price"></span>
+        </div>
+        <h2><a data-field="link" target="_blank" rel="noreferrer"></a></h2>
+        <p class="product" data-field="product"></p>
+        <p class="summary" data-field="summary"></p>
+        <div class="category-list" data-field="categories"></div>
+      </article>
+    </template>
+
+    <script src="/app.js" defer></script>
+  </body>
+</html>
+

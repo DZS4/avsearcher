@@ -1,0 +1,11 @@
+dist/
+build/
+.buildozer/
+__pycache__/
+*.pyc
+*.exe
+*.spec
+!buildozer.spec
+.git/
+.github/
+bin/
