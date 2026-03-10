@@ -12,31 +12,37 @@ try:
 except ImportError:
     webbrowser = None
 
+# Android detection — p4a sets ANDROID_ARGUMENT env var
+_ON_ANDROID = "ANDROID_ARGUMENT" in os.environ
+
 # 注册中文字体（必须在导入其他 kivy 模块之前）
-from kivy.core.text import LabelBase
+try:
+    from kivy.core.text import LabelBase
 
-_FONT_PATHS = []
-if sys.platform == "linux" and os.path.exists("/system/build.prop"):
-    # Android
-    _FONT_PATHS = [
-        "/system/fonts/NotoSansCJK-Regular.ttc",
-        "/system/fonts/NotoSansSC-Regular.otf",
-        "/system/fonts/DroidSansFallback.ttf",
-    ]
-else:
-    # Windows / Desktop Linux
-    _FONT_PATHS = [
-        "C:/Windows/Fonts/msyh.ttc",
-        "C:/Windows/Fonts/simhei.ttf",
-        "C:/Windows/Fonts/simsun.ttc",
-        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
-        "/usr/share/fonts/noto-cjk/NotoSansCJK-Regular.ttc",
-    ]
+    if _ON_ANDROID:
+        _FONT_PATHS = [
+            "/system/fonts/NotoSansCJK-Regular.ttc",
+            "/system/fonts/NotoSansSC-Regular.otf",
+            "/system/fonts/DroidSansFallback.ttf",
+        ]
+    else:
+        _FONT_PATHS = [
+            "C:/Windows/Fonts/msyh.ttc",
+            "C:/Windows/Fonts/simhei.ttf",
+            "C:/Windows/Fonts/simsun.ttc",
+            "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+            "/usr/share/fonts/noto-cjk/NotoSansCJK-Regular.ttc",
+        ]
 
-for _fp in _FONT_PATHS:
-    if os.path.exists(_fp):
-        LabelBase.register(name="Roboto", fn_regular=_fp)
-        break
+    for _fp in _FONT_PATHS:
+        try:
+            if os.path.exists(_fp):
+                LabelBase.register(name="Roboto", fn_regular=_fp)
+                break
+        except Exception:
+            pass
+except Exception:
+    pass
 
 from kivy.app import App
 from kivy.clock import Clock
@@ -190,10 +196,14 @@ class AVSearcherNativeApp(App):
         self._preload_running = False
 
     def build(self):
-        if Window and sys.platform not in ("android", "ios"):
-            Window.minimum_width = 980
-            Window.minimum_height = 720
+        if Window:
             Window.clearcolor = BG_COLOR
+            if not _ON_ANDROID:
+                try:
+                    Window.minimum_width = 980
+                    Window.minimum_height = 720
+                except Exception:
+                    pass
 
         root = BoxLayout(orientation="vertical", padding=dp(18), spacing=dp(14))
 
@@ -698,8 +708,7 @@ class AVSearcherNativeApp(App):
     def open_link(self, url: str):
         if not url:
             return
-        if sys.platform == "linux" and os.path.exists("/system/build.prop"):
-            # Android: use Intent
+        if _ON_ANDROID:
             try:
                 from jnius import autoclass
                 Intent = autoclass("android.content.Intent")
@@ -717,17 +726,18 @@ class AVSearcherNativeApp(App):
             self.set_status("当前没有可导出的结果")
             return
 
-        export_dir = Path(self.user_data_dir)
-        try:
-            desktop_downloads = Path.home() / "Downloads"
-            if desktop_downloads.exists() and desktop_downloads.is_dir():
-                export_dir = desktop_downloads
-        except Exception:
-            pass
-        export_dir.mkdir(parents=True, exist_ok=True)
-        output_path = export_dir / ("avsearcher-%s.csv" % int(time.time()))
+        export_dir = self.user_data_dir
+        if not _ON_ANDROID:
+            try:
+                dl = os.path.join(os.path.expanduser("~"), "Downloads")
+                if os.path.isdir(dl):
+                    export_dir = dl
+            except Exception:
+                pass
+        os.makedirs(export_dir, exist_ok=True)
+        output_path = os.path.join(export_dir, "avsearcher-%s.csv" % int(time.time()))
 
-        with output_path.open("w", encoding="utf-8-sig", newline="") as handle:
+        with open(output_path, "w", encoding="utf-8-sig", newline="") as handle:
             writer = csv.writer(handle)
             writer.writerow(["来源", "发布时间", "标题", "链接", "产品识别", "评级", "价格带", "分类", "摘要"])
             for item in self.last_items:
