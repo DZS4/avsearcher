@@ -6,7 +6,7 @@ source.dir = .
 source.include_exts = py,json,txt,png,jpg,kv
 source.exclude_dirs = tests,build,dist,bin,__pycache__,.git,.github
 version = 1.1.0
-requirements = python3,kivy==2.3.1,requests,charset_normalizer,idna,urllib3,certifi,pillow
+requirements = python3,kivy==2.3.1,requests,charset_normalizer,idna,urllib3,certifi
 orientation = portrait
 fullscreen = 0
 icon.filename = %(source.dir)s/icon.png
