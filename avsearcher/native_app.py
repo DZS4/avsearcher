@@ -4,9 +4,13 @@ import os
 import sys
 import threading
 import time
-import webbrowser
 from pathlib import Path
 from typing import Dict, List
+
+try:
+    import webbrowser
+except ImportError:
+    webbrowser = None
 
 # 注册中文字体（必须在导入其他 kivy 模块之前）
 from kivy.core.text import LabelBase
@@ -692,7 +696,20 @@ class AVSearcherNativeApp(App):
         threading.Thread(target=_fetch, daemon=True).start()
 
     def open_link(self, url: str):
-        if url:
+        if not url:
+            return
+        if sys.platform == "linux" and os.path.exists("/system/build.prop"):
+            # Android: use Intent
+            try:
+                from jnius import autoclass
+                Intent = autoclass("android.content.Intent")
+                Uri = autoclass("android.net.Uri")
+                PythonActivity = autoclass("org.kivy.android.PythonActivity")
+                intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                PythonActivity.mActivity.startActivity(intent)
+            except Exception:
+                pass
+        elif webbrowser:
             webbrowser.open(url)
 
     def export_csv(self, *_args):
@@ -701,9 +718,12 @@ class AVSearcherNativeApp(App):
             return
 
         export_dir = Path(self.user_data_dir)
-        desktop_downloads = Path.home() / "Downloads"
-        if desktop_downloads.exists() and desktop_downloads.is_dir():
-            export_dir = desktop_downloads
+        try:
+            desktop_downloads = Path.home() / "Downloads"
+            if desktop_downloads.exists() and desktop_downloads.is_dir():
+                export_dir = desktop_downloads
+        except Exception:
+            pass
         export_dir.mkdir(parents=True, exist_ok=True)
         output_path = export_dir / ("avsearcher-%s.csv" % int(time.time()))
 

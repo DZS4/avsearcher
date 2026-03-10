@@ -1,12 +1,11 @@
+import os
 import sys
-from pathlib import Path
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+VENDOR_DIR = os.path.join(BASE_DIR, ".deps")
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-VENDOR_DIR = BASE_DIR / ".deps"
-
-if VENDOR_DIR.exists():
-    sys.path.insert(0, str(VENDOR_DIR))
+if os.path.exists(VENDOR_DIR):
+    sys.path.insert(0, VENDOR_DIR)
 
 
 __all__ = ["app", "search"]

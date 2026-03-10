@@ -17,7 +17,7 @@ android.api = 33
 android.minapi = 24
 android.ndk = 25b
 android.accept_sdk_license = True
-android.arch = arm64-v8a
+android.archs = arm64-v8a, armeabi-v7a
 
 # 跳过不需要的主题颜色设定
 android.enable_androidx = True

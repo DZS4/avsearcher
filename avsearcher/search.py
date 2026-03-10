@@ -1,6 +1,7 @@
 import hashlib
 import html
 import json
+import os
 import re
 import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -138,8 +139,10 @@ def format_datetime(value: Optional[datetime]) -> Optional[str]:
 
 
 def load_source_configs() -> List[SourceConfig]:
-    path = Path(__file__).resolve().with_name("sources.json")
-    raw_items = json.loads(path.read_text(encoding="utf-8"))
+    source_dir = os.path.dirname(os.path.abspath(__file__))
+    path = os.path.join(source_dir, "sources.json")
+    with open(path, "r", encoding="utf-8") as f:
+        raw_items = json.load(f)
     return [SourceConfig(**item) for item in raw_items]
 
 
